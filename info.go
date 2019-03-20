@@ -1,4 +1,4 @@
-package inode
+package memfs
 
 import (
 	"os"
