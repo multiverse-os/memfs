@@ -10,7 +10,7 @@ import (
 )
 
 type File struct {
-	fs *FileSystem
+	fs *Filesystem
 
 	name  string
 	flags int
