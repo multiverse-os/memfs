@@ -147,6 +147,10 @@ func (n *Inode) IsDir() bool {
 	return os.ModeDir&n.Mode != 0
 }
 
+func (n *Inode) Rename(source, target string) error {
+	return n.Move(source, target)
+}
+
 func (n *Inode) Move(source, target string) error {
 
 	dir, name := filepath.Split(source)

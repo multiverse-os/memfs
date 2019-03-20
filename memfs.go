@@ -3,8 +3,7 @@ package memfs
 import (
 	"errors"
 	"os"
-	filepath "path" // force forward slash separators on all OSs.
-	pathfilepath "path/filepath"
+	filepath "path/filepath"
 	"sort"
 	"strings"
 	"syscall"
@@ -106,15 +105,15 @@ func (fs *FileSystem) TempDir() string {
 	return fs.Tempdir
 }
 
-func (fs *FileSystem) Open(name string) (File, error) {
+func (fs *FileSystem) Open(name string) (AbsFile, error) {
 	return fs.OpenFile(name, os.O_RDONLY, 0)
 }
 
-func (fs *FileSystem) Create(name string) (File, error) {
+func (fs *FileSystem) Create(name string) (AbsFile, error) {
 	return fs.OpenFile(name, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
 }
 
-func (fs *FileSystem) OpenFile(name string, flag int, perm os.FileMode) (File, error) {
+func (fs *FileSystem) OpenFile(name string, flag int, perm os.FileMode) (AbsFile, error) {
 	if name == "/" {
 		data := fs.data[int(fs.root.Ino)]
 		return &File{fs: fs, name: name, flags: flag, node: fs.root, data: data}, nil
@@ -468,7 +467,7 @@ func (fs *FileSystem) Symlink(oldname, newname string) error {
 	return nil
 }
 
-func (fs *FileSystem) Walk(name string, fn pathfilepath.WalkFunc) error {
+func (fs *FileSystem) Walk(name string, fn filepath.WalkFunc) error {
 	var stack []string
 	push := func(path string) {
 		stack = append(stack, path)
@@ -517,8 +516,8 @@ func (fs *FileSystem) Walk(name string, fn pathfilepath.WalkFunc) error {
 	return nil
 }
 
-func (fs *FileSystem) FastWalk(name string, fn FastWalkFunc) error {
-	return fs.Walk(name, func(path string, info os.FileInfo, err error) error {
-		return fn(path, info.Mode())
+func (fs *FileSystem) FastWalk(name string, fn filepath.WalkFunc) error {
+	return fs.Walk(name, func(p string, info os.FileInfo, err error) error {
+		return fn(p, info, err)
 	})
 }

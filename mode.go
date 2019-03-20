@@ -1,5 +1,11 @@
 package memfs
 
+import (
+	"errors"
+	"os"
+	"strings"
+)
+
 func ParseFileMode(input string) (os.FileMode, error) {
 	var mode os.FileMode
 

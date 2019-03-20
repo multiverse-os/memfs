@@ -3,8 +3,9 @@ package memfs
 import (
 	"io"
 	"io/ioutil"
-	"os"
 	"syscall"
+
+	"os"
 )
 
 type UnSeekable interface {
@@ -62,7 +63,7 @@ type Seekable interface {
 	Seek(offset int64, whence int) (ret int64, err error)
 }
 
-type File interface {
+type AbsFile interface {
 	Seekable
 
 	// ReadAt reads len(b) bytes from the File starting at byte offset off. It
@@ -166,7 +167,7 @@ func (f *InvalidFile) Readdirnames(n int) (names []string, err error) {
 	return nil, &os.PathError{Op: "readdirnames", Path: f.Name(), Err: syscall.EBADF}
 }
 
-func ExtendSeekable(sf Seekable) File {
+func ExtendSeekable(sf Seekable) AbsFile {
 	return &file{sf}
 }
 
