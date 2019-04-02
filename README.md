@@ -19,13 +19,15 @@ import(
     "fmt"
     "os"
 
-    "github.com/absfs/memfs"
+    "github.com/multiverse-os/memfs"
 )
 
 func main() {
-    fs, _ := memfs.NewFS() // remember kids don't ignore errors
+    fs, err := memfs.NewFS()
+    if err != nil {
+      panic(err)
+    }
 
-    // Opens a file with read/write permissions in the current directory
     f, _ := fs.Create("/example.txt")
 
     f.Write([]byte("Hello, world!"))
